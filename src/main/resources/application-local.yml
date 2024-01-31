@@ -1,8 +1,14 @@
+server:
+  port: 8081
 spring:
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/medicalService
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/medicalService
     username: postgres
     password: postgres
   flyway:
     enabled: true
-    url: jdbc:postgresql://localhost:5432/medicalService

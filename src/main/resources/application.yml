@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: medicalService
+  cloud:
+    consul:
+      config:
+        enabled: false
+      discovery:
+        healthCheckPath: /actuator/health
+        healthCheckInterval: 20s
+        instanceId: ${spring.application.name}:${random.value}
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 20000
+        readTimeout: 20000
