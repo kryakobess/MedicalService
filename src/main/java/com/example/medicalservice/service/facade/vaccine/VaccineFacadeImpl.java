@@ -1,4 +1,4 @@
-package com.example.medicalservice.service.facade;
+package com.example.medicalservice.service.facade.vaccine;
 
 import com.example.medicalservice.model.exception.FileUploadingException;
 import com.example.medicalservice.service.service.VaccinationReportProcessor;

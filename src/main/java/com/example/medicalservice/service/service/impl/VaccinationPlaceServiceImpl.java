@@ -6,6 +6,8 @@ import com.example.medicalservice.service.service.VaccinationPlaceService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +27,11 @@ public class VaccinationPlaceServiceImpl implements VaccinationPlaceService {
     @Override
     public VaccinationPlace save(VaccinationPlace vaccinationPlace) {
         return vaccinationPlaceRepository.save(vaccinationPlace);
+    }
+
+    @Override
+    public Page<VaccinationPlace> getVaccinationPlacesPageable(Pageable pageable) {
+        return vaccinationPlaceRepository.findAll(pageable);
     }
 
 }

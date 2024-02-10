@@ -1,6 +1,6 @@
 package com.example.medicalservice.controller;
 
-import com.example.medicalservice.service.facade.VaccineFacade;
+import com.example.medicalservice.service.facade.vaccine.VaccineFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,5 +25,6 @@ public class VaccinationController {
     public void processFile(@RequestPart(value = "report") MultipartFile report) {
         facade.processVaccinationReport(report);
     }
+
 
 }
