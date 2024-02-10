@@ -1,4 +1,4 @@
-package com.example.medicalservice.service.facade;
+package com.example.medicalservice.service.facade.vaccine;
 
 import org.springframework.web.multipart.MultipartFile;
 
