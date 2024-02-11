@@ -19,7 +19,6 @@ public interface VaccineMapper {
     @Mapping(target = "vaccineTypeEntity", expression = "java(getTypeByCode(reportData, vaccinationTypeEntities))")
     @Mapping(target = "patient.firstName", source = "reportData.patientFirstName")
     @Mapping(target = "patient.secondName", source = "reportData.patientSecondName")
-    @Mapping(target = "patient.documentType", source = "reportData.documentType")
     @Mapping(target = "patient.documentNumber", source = "reportData.documentNumber")
     @Mapping(target = "vaccinationDate", source = "reportData.vaccinationDate")
     Vaccine fromReportData(ReportData reportData, @Context List<VaccineTypeEntity> vaccinationTypeEntities);

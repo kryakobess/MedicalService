@@ -9,9 +9,32 @@ spring:
         healthCheckPath: /actuator/health
         healthCheckInterval: 20s
         instanceId: ${spring.application.name}:${random.value}
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceId: AUTO
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            useProperties: false
+            tablePrefix: QRTZ_
+            clusterCheckinInterval: 5000
+            isClustered: true
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadsInheritContextClassLoaderOfInitializingThread: true
+      auto-startup: false
 feign:
   client:
     config:
       default:
         connectTimeout: 20000
         readTimeout: 20000
+
+scheduler:
+  refresh-patient-info-job-cron: 0 0 2 * * ?

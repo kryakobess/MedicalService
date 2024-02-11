@@ -1,6 +1,5 @@
 package com.example.medicalservice.model.entity;
 
-import com.example.medicalservice.model.model.Patient;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,9 +25,7 @@ public class Vaccine {
     @JoinColumn(name = "vaccination_place_id")
     private VaccinationPlace vaccinationPlace;
 
-    @Column(name = "citizen_id")
-    private Long citizenId;
-
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
     private Patient patient;
 }

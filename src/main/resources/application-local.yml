@@ -12,3 +12,6 @@ spring:
     password: postgres
   flyway:
     enabled: true
+
+app:
+  secret: some-secret-key2

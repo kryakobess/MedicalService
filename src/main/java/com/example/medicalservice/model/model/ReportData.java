@@ -16,6 +16,5 @@ public class ReportData {
     private LocalDate vaccinationDate;
     private String patientFirstName;
     private String patientSecondName;
-    private DocumentType documentType;
     private String documentNumber;
 }

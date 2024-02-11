@@ -31,10 +31,9 @@ public class VaccinationReportProcessorImpl implements VaccinationReportProcesso
     private static final int VACCINE_NAME = 6;
     private static final int VACCINATION_DATE = 7;
     private static final int PATIENT_NAME = 8;
-    private static final int DOCUMENT_TYPE = 9;
-    private static final int DOCUMENT_NUMBER = 10;
+    private static final int DOCUMENT_NUMBER = 9;
     private static final List<String> COLUMN_NAMES =
-            List.of("МО вакцинации", "Подразделение", "Дата назначения", "Вакцинация", "Статус вакцинации", "Наименование вакцины", "Дата вакцинации", "ФИО", "Вид документа", "Номер документа");
+            List.of("МО вакцинации", "Подразделение", "Дата назначения", "Вакцинация", "Статус вакцинации", "Наименование вакцины", "Дата вакцинации", "ФИО", "Номер пасспорта");
 
     @Override
     public List<ReportData> processReport(File reportFile) throws IOException {
@@ -59,7 +58,6 @@ public class VaccinationReportProcessorImpl implements VaccinationReportProcesso
                 .vaccinationDate(getVaccinationDate(cells))
                 .patientFirstName(getFirstName(cells))
                 .patientSecondName(getSecondName(cells))
-                .documentType(getDocumentType(cells))
                 .documentNumber(getDocumentNumber(cells))
                 .build();
     }
@@ -108,15 +106,6 @@ public class VaccinationReportProcessorImpl implements VaccinationReportProcesso
                 .filter(type -> type.getDescription().equalsIgnoreCase(rawValue))
                 .findFirst()
                 .orElseThrow(() -> new FileProcessorException(String.format("Unknown vaccine type at cell: %s", cell.getAddress().toString())));
-    }
-
-    private DocumentType getDocumentType(List<Cell> cells) {
-        Cell cell = cells.get(DOCUMENT_TYPE);
-        String rawValue = cell.getRawValue();
-        return Arrays.stream(DocumentType.values())
-                .filter(documentType -> documentType.getDescription().equalsIgnoreCase(rawValue))
-                .findFirst()
-                .orElseThrow(() -> new FileProcessorException(String.format("Unknown passport type at cell: %s", cell.getAddress())));
     }
 
     private LocalDate getVaccinationDate(List<Cell> cells) {

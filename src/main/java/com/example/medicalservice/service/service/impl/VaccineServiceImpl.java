@@ -1,17 +1,12 @@
 package com.example.medicalservice.service.service.impl;
 
+import com.example.medicalservice.model.entity.Patient;
 import com.example.medicalservice.model.entity.VaccinationPlace;
 import com.example.medicalservice.model.entity.Vaccine;
-import com.example.medicalservice.model.model.Patient;
 import com.example.medicalservice.model.model.ReportData;
 import com.example.medicalservice.repository.VaccineRepository;
 import com.example.medicalservice.service.VaccineMapper;
-import com.example.medicalservice.service.client.BureaucracyClient;
-import com.example.medicalservice.service.mapper.PatientMapper;
-import com.example.medicalservice.service.service.VaccinationPlaceService;
-import com.example.medicalservice.service.service.VaccineService;
-import com.example.medicalservice.service.service.VaccineTypeService;
-import feign.FeignException;
+import com.example.medicalservice.service.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,11 +23,11 @@ import java.util.stream.Collectors;
 public class VaccineServiceImpl implements VaccineService {
 
     private final VaccineMapper vaccineMapper;
-    private final BureaucracyClient bureaucracyClient;
     private final VaccinationPlaceService vaccinationPlaceService;
     private final VaccineTypeService vaccineTypeService;
     private final VaccineRepository vaccineRepository;
-    private final PatientMapper patientMapper;
+    private final PatientService patientService;
+    private final BureaucracyService bureaucracyService;
 
     @Override
     @Transactional
@@ -70,23 +65,24 @@ public class VaccineServiceImpl implements VaccineService {
     }
 
     private void processPatients(List<Vaccine> vaccines) {
+        var documentNumbers = vaccines.stream()
+                .map(vaccine -> vaccine.getPatient().getDocumentNumber())
+                .toList();
+
+        var registeredPatients = patientService.getByDocumentNumbers(documentNumbers).stream()
+                .collect(Collectors.toMap(Patient::getDocumentNumber, Function.identity()));
+
         vaccines.forEach(vaccine -> {
             var patient = vaccine.getPatient();
-            Long citizenId = getCitizenId(patient);
-            vaccine.setCitizenId(citizenId);
+            if (registeredPatients.containsKey(patient.getDocumentNumber())) {
+                patient = registeredPatients.get(patient.getDocumentNumber());
+            } else {
+                Long citizenId = bureaucracyService.getCitizenIdForPatient(patient);
+                patient.setCitizenId(citizenId);
+                patient = patientService.save(patient);
+                registeredPatients.put(patient.getDocumentNumber(), patient);
+            }
+            vaccine.setPatient(patient);
         });
-    }
-
-    private Long getCitizenId(Patient patient) {
-        try {
-            log.info("Checking for patient: {} {} in bureaucracy service", patient.getFirstName(), patient.getSecondName());
-            var response = bureaucracyClient.getByNameAndDocument(patientMapper.toCitizenInfoRequestDto(patient));
-            log.info("Patient {} {} is saved with id={}", patient.getFirstName(), patient.getSecondName(), response.getCitizenId());
-            return response.getCitizenId();
-        } catch (FeignException e) {
-            log.warn("Failed to fetch citizen id for patient with firstname:{}, secondname: {}. Response: {}. Mark as unknown",
-                    patient.getFirstName(), patient.getSecondName(), e.contentUTF8());
-        }
-        return null;
     }
 }
