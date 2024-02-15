@@ -4,13 +4,16 @@ import com.example.medicalservice.model.entity.Patient;
 import com.example.medicalservice.model.entity.VaccinationPlace;
 import com.example.medicalservice.model.entity.Vaccine;
 import com.example.medicalservice.model.model.ReportData;
+import com.example.medicalservice.model.model.VaccinationFilter;
 import com.example.medicalservice.repository.VaccineRepository;
-import com.example.medicalservice.service.VaccineMapper;
+import com.example.medicalservice.service.mapper.VaccineMapper;
 import com.example.medicalservice.service.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +31,11 @@ public class VaccineServiceImpl implements VaccineService {
     private final VaccineRepository vaccineRepository;
     private final PatientService patientService;
     private final BureaucracyService bureaucracyService;
+    private final PredicateFactory predicateFactory;
 
     @Override
     @Transactional
-    public void createFromReportData(List<ReportData> reportData) {
+    public List<Vaccine> createFromReportData(List<ReportData> reportData) {
         log.info("Processing reports: {}", reportData.size());
         var types = vaccineTypeService.getAll();
         List<Vaccine> vaccines = reportData.stream()
@@ -39,7 +43,12 @@ public class VaccineServiceImpl implements VaccineService {
                 .toList();
         processVaccinationPlaces(vaccines);
         processPatients(vaccines);
-        vaccineRepository.saveAll(vaccines);
+        return vaccineRepository.saveAll(vaccines);
+    }
+
+    @Override
+    public Page<Vaccine> getVaccinePage(VaccinationFilter filter, Pageable pageable) {
+        return vaccineRepository.findAll(predicateFactory.getVaccinationFiltered(filter), pageable);
     }
 
     private void processVaccinationPlaces(List<Vaccine> vaccines) {
