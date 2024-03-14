@@ -1,12 +1,16 @@
 package com.example.medicalservice.service.service.impl;
 
+import com.example.medicalservice.model.dto.VaccineQrMessageDto;
 import com.example.medicalservice.model.entity.Patient;
 import com.example.medicalservice.model.entity.VaccinationPlace;
 import com.example.medicalservice.model.entity.Vaccine;
+import com.example.medicalservice.model.entity.VaccineTypeEntity;
+import com.example.medicalservice.model.enums.VaccineType;
 import com.example.medicalservice.model.model.ReportData;
 import com.example.medicalservice.model.model.VaccinationFilter;
 import com.example.medicalservice.repository.VaccineRepository;
 import com.example.medicalservice.service.mapper.VaccineMapper;
+import com.example.medicalservice.service.producer.VaccineQrCreationProducer;
 import com.example.medicalservice.service.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,6 +37,7 @@ public class VaccineServiceImpl implements VaccineService {
     private final PatientService patientService;
     private final BureaucracyService bureaucracyService;
     private final PredicateFactory predicateFactory;
+    private final VaccineQrCreationProducer qrCreationProducer;
 
     @Override
     @Transactional
@@ -92,6 +98,20 @@ public class VaccineServiceImpl implements VaccineService {
                 registeredPatients.put(patient.getDocumentNumber(), patient);
             }
             vaccine.setPatient(patient);
+            createQrCodeForPatient(patient, vaccine.getVaccinationDate(), vaccine.getVaccineTypeEntity());
         });
+    }
+
+    private void createQrCodeForPatient(Patient patient, LocalDate vaccinationDate, VaccineTypeEntity vaccineType) {
+        var citizenId = patient.getCitizenId();
+        var vaccineDurableUntil = vaccinationDate.plusDays(vaccineType.getDurationInDays());
+        if (citizenId != null) {
+            qrCreationProducer.sendCreateQr(
+                    VaccineQrMessageDto.builder()
+                            .citizenId(citizenId)
+                            .vaccineDurableUntil(vaccineDurableUntil)
+                            .build()
+            );
+        }
     }
 }
