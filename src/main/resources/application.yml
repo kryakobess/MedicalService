@@ -29,12 +29,26 @@ spring:
             threadCount: 10
             threadsInheritContextClassLoaderOfInitializingThread: true
       auto-startup: false
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      acks: 1
+      spring:
+        json:
+          add:
+            type:
+              headers: false
 feign:
   client:
     config:
       default:
         connectTimeout: 20000
         readTimeout: 20000
+kafka:
+  topic:
+    vaccineQrTopicName: vaccine_qr_generation_topic
 
 scheduler:
   refresh-patient-info-job-cron: 0 0 2 * * ?

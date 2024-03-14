@@ -17,6 +17,7 @@ public class RefreshPatientInfoJob implements Job {
 
     private final PatientService patientService;
     private final BureaucracyService bureaucracyService;
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         var unregisteredPatients = patientService.getAllWithNoCitizenId();
