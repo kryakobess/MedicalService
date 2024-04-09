@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,12 +31,14 @@ public class VaccinationController {
             @ApiResponse(description = "Validation error", responseCode = "400")
     })
     @PostMapping(value = "/processFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAuthority('MEDICAL_REDACTOR')")
     public ResponseEntity<List<VaccineDto>> processFile(@RequestPart(value = "report") MultipartFile report) {
         return ResponseEntity.ok(facade.processVaccinationReport(report));
     }
 
     @GetMapping("/get-all")
     @Operation(description = "Get all vaccination info in pageable format with filtering")
+    @PreAuthorize("hasAuthority('MEDICAL_VIEWER')")
     public ResponseEntity<Page<VaccineDto>> getVaccinationInfoPage(
             VaccinationFilter filter,
             @ParameterObject Pageable pageable
