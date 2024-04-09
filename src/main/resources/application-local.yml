@@ -16,5 +16,19 @@ spring:
   flyway:
     enabled: true
 
+jwt:
+  api-name:
+    MedicalApi
+  api-key:
+    MedicalApi
+  publicKey:
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm9RyWCHOtxvPhoQfLMhJ
+    zB/3Ny1lRzBAvrmB383jh4LMQktvQTmm/6a+I7Y/MnPV3TQER6v1KkSMsTAfsI3r
+    gSw+bk+rN7AgLyQ33vb3OAzekHCcyj2jv1Iuwy7eCqmo2ZBz9j1XNga04RsfSFCI
+    RBdv4X84TcO075zh1nzDugoJjaRbP2u1Nmlyy0Gs+hEQwwwUyAKJWdgTkyiqOKHm
+    ElayWn9CsHn9dkduAG6ymkbl1Mozar+u818YgcuLuMBSaF5off+I0B46Wd9z9TxL
+    kR9jP/sjwSttp9rUkr1Qump1BGCs63KsTHIQLmDBXTguqMnGJz0wYODfVMpsOdVw
+    kQIDAQAB
+
 app:
   secret: some-secret-key2
