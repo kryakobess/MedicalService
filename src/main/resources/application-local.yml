@@ -17,6 +17,7 @@ spring:
     enabled: true
 
 jwt:
+  cacheExpireTime: 15
   api-name:
     MedicalApi
   api-key:
