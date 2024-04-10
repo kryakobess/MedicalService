@@ -1,6 +1,7 @@
 package com.example.medicalservice.configuration.security.filter;
 
 import com.example.medicalservice.service.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,8 +33,14 @@ public class JwtFilter extends OncePerRequestFilter {
         var authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             var jwt = authHeader.replace(BEARER_PREFIX, "");
-            log.debug("Jwt authorization: {}", jwt);
-            SecurityContextHolder.getContext().setAuthentication(jwtService.parseToken(jwt));
+            log.debug("Jwt authorization: {}", jwt.substring(0, 30));
+            try {
+                SecurityContextHolder.getContext().setAuthentication(jwtService.parseToken(jwt));
+            } catch (ExpiredJwtException e) {
+                log.debug("Jwt expired");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
         }
         filterChain.doFilter(request, response);
     }
