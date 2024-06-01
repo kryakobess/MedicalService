@@ -52,3 +52,7 @@ kafka:
 
 scheduler:
   refresh-patient-info-job-cron: 0 0 2 * * ?
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
