@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "bureaucracyService", path = "/person")
+@FeignClient(name = "bureaucracyService", url = "${feign.bureaucracy-service}", path = "/person")
 public interface BureaucracyClient {
 
     @GetMapping("/getByNameAndDocument")
