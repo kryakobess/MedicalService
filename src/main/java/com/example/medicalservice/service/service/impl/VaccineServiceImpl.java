@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,18 +44,28 @@ public class VaccineServiceImpl implements VaccineService {
     @Transactional
     public List<Vaccine> createFromReportData(List<ReportData> reportData) {
         log.info("Processing reports: {}", reportData.size());
+
         var types = vaccineTypeService.getAll();
         List<Vaccine> vaccines = reportData.stream()
                 .map(report -> vaccineMapper.fromReportData(report, types))
                 .toList();
+
         processVaccinationPlaces(vaccines);
         processPatients(vaccines);
+
+        log.info("Reports were processed. Vaccination info count: {}", vaccines);
         return vaccineRepository.saveAll(vaccines);
     }
 
     @Override
     public Page<Vaccine> getVaccinePage(VaccinationFilter filter, Pageable pageable) {
         return vaccineRepository.findAll(predicateFactory.getVaccinationFiltered(filter), pageable);
+    }
+
+    @Override
+    public Vaccine getLatestVaccineForPatient(Patient patient) {
+        log.info("Getting latest vaccine for patient with id={}", patient.getId());
+        return vaccineRepository.getLatestVaccinationDateForPatient(patient);
     }
 
     private void processVaccinationPlaces(List<Vaccine> vaccines) {

@@ -31,6 +31,7 @@ public class VaccineFacadeImpl implements VaccineFacade{
     @Override
     public List<VaccineDto> processVaccinationReport(MultipartFile report) {
         log.info("Getting POST processVaccinationReport request");
+
         fileReportValidator.validate(report);
         try (var reportFile = FileManagerUtils.convertMultipartToFile(report)) {
             var processedReport = vaccinationReportProcessor.processReport(reportFile.getReport());
