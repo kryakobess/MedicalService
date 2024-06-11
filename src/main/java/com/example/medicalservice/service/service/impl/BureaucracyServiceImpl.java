@@ -29,7 +29,7 @@ public class BureaucracyServiceImpl implements BureaucracyService {
         } catch (FeignException e) {
             var response = e.contentUTF8();
             log.warn("Failed to fetch citizen id for patient with firstname:{}, secondname: {}. Response: {}. Mark as unknown",
-                    patient.getFirstName(), patient.getSecondName(), response);
+                    patient.getFirstName(), patient.getSecondName(), response, e);
         }
         return null;
     }
